@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mercado Scout — Calculadora de precio MercadoLibre Chile</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNjQgNjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjY0IiB5Mj0iNjQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjN0MzQUVEIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA2QjZENCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTYiIGZpbGw9InVybCgjZykiLz4KICA8Y2lyY2xlIGN4PSIyNiIgY3k9IjI2IiByPSIxNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjYiLz4KICA8bGluZSB4MT0iMzYiIHkxPSIzNiIgeDI9IjQ4IiB5Mj0iNDgiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTkgMjdsNSA1IDktMTMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" />
+  <link rel="stylesheet" href="css/styles.css?v=21" />
+  <script>
+    // Aplica el tema guardado ANTES de pintar la página, para evitar el
+    // parpadeo de cargar en un tema y cambiar al guardado un instante
+    // después. Si no hay nada guardado, no se toca nada y manda el
+    // prefers-color-scheme del sistema (ver styles.css).
+    (function () {
+      try {
+        var tema = localStorage.getItem('mlpc-tema');
+        if (tema === 'light' || tema === 'dark') {
+          document.documentElement.setAttribute('data-theme', tema);
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <header>
+    <div class="fila-header">
+      <div class="marca">
+        <svg class="logo-marca" viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="gradLogo" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#7C3AED"/>
+              <stop offset="1" stop-color="#06B6D4"/>
+            </linearGradient>
+          </defs>
+          <rect width="64" height="64" rx="16" fill="url(#gradLogo)"/>
+          <circle cx="26" cy="26" r="14" fill="none" stroke="#fff" stroke-width="6"/>
+          <line x1="36" y1="36" x2="48" y2="48" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+          <path d="M19 27l5 5 9-13" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>
+          <h1>Mercado Scout</h1>
+          <p class="subtitulo">Calculadora de precio de venta — MercadoLibre Chile. Busca el producto, anota el precio, y calculá si conviene vender ahí.</p>
+        </div>
+      </div>
+      <button type="button" id="btnTema" class="toggle-tema" aria-label="Cambiar tema claro/oscuro">🌙</button>
+    </div>
+  </header>
+
+  <main>
+    <form id="formCalculadora">
+      <fieldset>
+        <legend>Producto</legend>
+
+        <label for="nombreOLink">Nombre o link del producto</label>
+        <input type="text" id="nombreOLink" placeholder="Ej: Audífonos Bluetooth JBL Tune 510BT" />
+
+        <label>Foto del producto (opcional — para buscar por imagen en Google Lens)</label>
+        <div class="fila-botones">
+          <button type="button" id="btnTomarFoto" class="btn-secundario">📷 Tomar foto</button>
+          <button type="button" id="btnElegirFoto" class="btn-secundario">🖼️ Elegir de galería</button>
+        </div>
+        <input type="file" id="fotoProductoCamara" accept="image/*" capture="environment" class="oculto" />
+        <input type="file" id="fotoProductoGaleria" accept="image/*" class="oculto" />
+        <div id="previewFoto" class="preview-foto oculto">
+          <img id="previewFotoImg" alt="Foto del producto" />
+          <button type="button" id="btnQuitarFoto" class="btn-secundario btn-chico">Quitar foto</button>
+        </div>
+
+        <div class="fila-botones">
+          <button type="button" id="btnBuscarGoogle" class="btn-secundario btn-con-icono">
+            <svg class="icono-boton" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.9-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.1 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 16 18.9 13 24 13c3.1 0 5.9 1.1 8 3.1l5.7-5.7C34.5 7.5 29.5 5 24 5 16.3 5 9.7 9.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.9 26.7 37 24 37c-5.3 0-9.7-3.4-11.3-8.1l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.2 5.2C39.9 36.7 44 30.9 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
+            Buscar en Google
+          </button>
+          <button type="button" id="btnBuscarMl" class="btn-secundario btn-con-icono">
+            <svg class="icono-boton" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="10" fill="#FFE600"/><path d="M14 20c0-6 4.5-10 10-10s10 4 10 10" stroke="#2D3277" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="11" y="19" width="26" height="17" rx="4" fill="#2D3277"/><rect x="14" y="22" width="20" height="11" rx="2.5" fill="#FFE600"/><circle cx="20" cy="27.5" r="1.6" fill="#2D3277"/><circle cx="28" cy="27.5" r="1.6" fill="#2D3277"/></svg>
+            Buscar en MercadoLibre
+          </button>
+        </div>
+        <p id="notaBusqueda" class="alerta alerta-info oculto"></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Datos</legend>
+
+        <label for="precioCompra">Precio de compra (CLP)</label>
+        <input type="number" id="precioCompra" min="1" step="1" required />
+
+        <label for="precioVenta">Precio en MercadoLibre (CLP)</label>
+        <input type="number" id="precioVenta" min="1" step="1" required />
+
+        <label for="comisionPct">Cargo por venta de ML (%) — el que te muestra su calculadora o el desglose de una venta ya hecha</label>
+        <input type="number" id="comisionPct" min="0" max="50" step="0.1" required />
+
+        <button type="button" id="btnSugerirComision" class="btn-secundario">🔎 Sugerir comisión real (según categoría)</button>
+        <p class="muted">Usa el nombre del producto de arriba + este precio para buscar la categoría y traer la comisión real de tu cuenta MercadoLibre.</p>
+        <div id="sugerenciasComision" class="oculto"></div>
+
+        <label for="costoEnvio">Costo de envío a tu cargo (CLP) — el que te muestra la calculadora de ML para ese producto</label>
+        <input type="number" id="costoEnvio" min="0" step="1" value="0" />
+      </fieldset>
+
+      <button type="submit" id="btnCalcular">Calcular</button>
+    </form>
+
+    <section id="tarjetaResultado" class="tarjeta oculto">
+      <h2>Resultado</h2>
+
+      <div id="alertaRentabilidad" class="alerta"></div>
+
+      <div class="grid-resultado">
+        <div><span class="label">Precio de compra</span><span id="rPrecioCompra"></span></div>
+        <div><span class="label">Precio en MercadoLibre</span><span id="rPrecioVenta"></span></div>
+        <div><span class="label">Cargo por venta ML</span><span id="rComision"></span></div>
+        <div><span class="label">Costo de envío</span><span id="rCostoEnvio"></span></div>
+        <div><span class="label">Cargo fijo aplicado</span><span id="rCargoFijo"></span></div>
+        <div class="amplio"><span class="label">Total que te paga MercadoLibre</span><span id="rTotalMl"></span></div>
+        <div><span class="label">IVA sobre el margen (venta - compra)</span><span id="rIvaMargen"></span></div>
+        <div class="destacado"><span class="label">Ganancia neta</span><span id="rGananciaNeta"></span></div>
+        <div><span class="label">ROI real</span><span id="rRoiReal"></span></div>
+        <div><span class="label">Margen sobre el precio de venta</span><span id="rMargen"></span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p class="muted">
+      El % de cargo por venta y el costo de envío son los que te muestra MercadoLibre
+      mismo (calculadora de costos al publicar, o desglose de una venta ya hecha) — no
+      hace falta sumarles IVA aparte, ya vienen incluidos. También se descuenta el IVA
+      sobre tu margen (venta - compra) que declarás al SII.
+    </p>
+  </footer>
+
+  <script src="js/config.js?v=21"></script>
+  <script src="js/calculator.js?v=21"></script>
+  <script src="js/costos.js?v=21"></script>
+  <script src="js/app.js?v=21"></script>
+</body>
+</html>
